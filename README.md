@@ -5,14 +5,15 @@
 然而，当多线程set其属性setDateFormat时，有概率发生crash。
 
 于是，想到重写setDateFormat方法，在方法里面对dateFormat属性加锁，在NSDateFormatter的扩展类中重写以下方法：
-
-	-(void)setDateFormat:(NSString *)dateFormat {
+```objective-c
+-(void)setDateFormat:(NSString *)dateFormat {
     
-	 	@synchronized(self.dateFormat) {
+	@synchronized(self.dateFormat) {
         
         	self.dateFormat = dateFormat;
     	}
-	}
+}
+```
 
 但是，这里有一个问题，在set方法中使用self.dateFormat会导致该方法无限循环，同时，类的扩展中并不能访问到_dateFormat属性，
 只能通过self.dateFormat来访问。
